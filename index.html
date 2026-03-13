@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BCS SGPA Calculator - 8 Subjects</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .subjects { padding: 30px; }
+        .subject-row {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        .subject-name { 
+            font-weight: bold; 
+            color: #333; 
+            font-size: 14px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        input, select {
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus { 
+            outline: none; 
+            border-color: #4facfe; 
+        }
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 30px 0;
+            transition: transform 0.3s;
+        }
+        .calculate-btn:hover { transform: translateY(-2px); }
+        .result {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+        .sgpa-value { font-size: 3em; font-weight: bold; margin: 10px 0; }
+        .grade-table {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .grade-table h3 { margin-bottom: 15px; color: #333; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #dee2e6; }
+        th { background: #4facfe; color: white; }
+        .credits-total { 
+            background: #e3f2fd; 
+            padding: 15px; 
+            border-radius: 10px; 
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 BCS SGPA Calculator</h1>
+            <p>Semester Grade Point Average for 8 Subjects (Total 21 Credits)</p>
+        </div>
+
+        <div class="subjects">
+            <div class="credits-total">
+                📊 Total Credits: 21 | Enter marks (0-100) → Auto Grade Conversion
+            </div>
+
+            <!-- Subject 1 -->
+            <div class="subject-row">
+                <div class="subject-name">📐 Mathematics - BCS301</div>
+                <input type="number" id="grade1" min="0" max="100" placeholder="Marks">
+                <input type="number" id="credit1" value="4" min="1" readonly>
+                <select id="letter1">
+                    <option value="">Auto Grade</option>
+                </select>
+            </div>
+
+            <!-- Subject 2 -->
+            <div class="subject-row">
+                <div class="subject-name">💻 Digital Design & Computer Org - BCS302</div>
+                <input type="number" id="grade2" min="0" max="100" placeholder="Marks">
+                <input type="number" id="credit2" value="4" readonly>
+                <select id="letter2">
+                    <option value="">Auto Grade</option>
+                </select>
+            </div>
+
+            <!-- Subject 3 -->
+            <div class="subject-row">
+                <div class="subject-name">⚙️ Operating System - BCS303</div>
+                <input type="number" id="grade3" min="0" max="100" placeholder="Marks">
+                <input type="number" id="credit3" value="4" readonly>
+                <select id="letter3">
+                    <option value="">Auto Grade</option>
+                </select>
+            </div>
+
+            <!-- Subject 4 -->
+            <div class="subject-row">
+                <div class="subject-name">📚 Data Structures & Apps - BCS304</div>
+                <input type="number" id="grade4" min="0" max="100" placeholder="Marks">
+                <input type="number" id="credit4" value="3" readonly>
+                <select id="letter4">
+                    <option value="">Auto Grade</option>
+                </select>
+            </div>
+
+            <!-- Subject 5 -->
+            <div class="subject-row">
+                <div class="subject-name">🧪 Data Structures Lab - BCSL305</div>
+                <input type="number" id="grade5" min="0" max="100" placeholder="Marks">
+                <input type="number" id="credit5" value="1" readonly>
+                <select id="letter5">
+                    <option value="">Auto Grade</option>
+                </select>
+            </div>
+
+            <!-- Subject 6 -->
+            <div class="subject-row">
+                <div class="subject-name">☕ Object Orientation with Java - BCS306A</div>
+                <input type="number" id="grade6" min="0" max="100" placeholder="Marks">
+                <input type="number" id="credit6" value="3" readonly>
+                <select id="letter6">
+                    <option value="">Auto Grade</option>
+                </select>
+            </div>
+
+            <!-- Subject 7 -->
+            <div class="subject-row">
+                <div class="subject-name">🤝 Social Connect & Responsibility - BSCK307</div>
+                <input type="number" id="grade7" min="0" max="100" placeholder="Marks">
+                <input type="number" id="credit7" value="1" readonly>
+                <select id="letter7">
+                    <option value="">Auto Grade</option>
+                </select>
+            </div>
+
+            <!-- Subject 8 -->
+            <div class="subject-row">
+                <div class="subject-name">⭐ Ability/Skill Enhancement - BCS358x</div>
+                <input type="number" id="grade8" min="0" max="100" placeholder="Marks">
+                <input type="number" id="credit8" value="1" readonly>
+                <select id="letter8">
+                    <option value="">Auto Grade</option>
+                </select>
+            </div>
+
+            <button class="calculate-btn" onclick="calculateSGPA()">🧮 Calculate SGPA</button>
+
+            <div class="result" id="result">
+                <div class="sgpa-value" id="sgpaValue">-</div>
+                <div>Your SGPA: <span id="sgpaDisplay">-</span></div>
+                <div style="margin-top: 10px; font-size: 1.1em;">Total Credits: 21</div>
+            </div>
+
+            <div class="grade-table">
+                <h3>📋 Standard Grading Scale</h3>
+                <table>
+                    <tr><th>Marks</th><th>Grade</th><th>Grade Point</th></tr>
+                    <tr><td>≥90</td><td>O</td><td>10</td></tr>
+                    <tr><td>80-89</td><td>A+</td><td>9</td></tr>
+                    <tr><td>70-79</td><td>A</td><td>8</td></tr>
+                    <tr><td>60-69</td><td>B+</td><td>7</td></tr>
+                    <tr><td>50-59</td><td>B</td><td>6</td></tr>
+                    <tr><td>40-49</td><td>C</td><td>5</td></tr>
+                    <tr><td>&lt;40</td><td>F</td><td>0</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const gradePoints = {
+            'O': 10, 'A+': 9, 'A': 8, 'B+': 7, 'B': 6, 'C': 5, 'F': 0
+        };
+
+        function getGradePoint(marks) {
+            if (marks >= 90) return 10;
+            if (marks >= 80) return 9;
+            if (marks >= 70) return 8;
+            if (marks >= 60) return 7;
+            if (marks >= 50) return 6;
+            if (marks >= 40) return 5;
+            return 0;
+        }
+
+        function getLetterGrade(marks) {
+            if (marks >= 90) return 'O';
+            if (marks >= 80) return 'A+';
+            if (marks >= 70) return 'A';
+            if (marks >= 60) return 'B+';
+            if (marks >= 50) return 'B';
+            if (marks >= 40) return 'C';
+            return 'F';
+        }
+
+        // Auto-update grade when marks change
+        function updateGrade(subjectNum) {
+            const marksInput = document.getElementById(grade${subjectNum});
+            const letterSelect = document.getElementById(letter${subjectNum});
+            
+            marksInput.addEventListener('input', function() {
+                const marks = parseInt(this.value) || 0;
+                const grade = getLetterGrade(marks);
+                letterSelect.value = grade;
+            });
+        }
+
+        // Initialize auto-grade for all 8 subjects
+        for (let i = 1; i <= 8; i++) {
+            updateGrade(i);
+        }
+
+        function calculateSGPA() {
+            let totalGradePoints = 0;
+            let totalCredits = 0;
+
+            for (let i = 1; i <= 8; i++) {
+                const marks = parseInt(document.getElementById(grade${i}).value) || 0;
+                const credits = parseInt(document.getElementById(credit${i}).value) || 0;
+                const gradePoint = getGradePoint(marks);
+                
+                totalGradePoints += gradePoint * credits;
+                totalCredits += credits;
+            }
+
+            const sgpa = totalCredits > 0 ? (totalGradePoints / totalCredits).toFixed(2) : 0;
+            
+            document.getElementById('sgpaValue').textContent = sgpa;
+            document.getElementById('sgpaDisplay').textContent = sgpa;
+            document.getElementById('result').style.display = 'block';
+            
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Populate letter grade dropdowns
+        for (let i = 1; i <= 8; i++) {
+            const select = document.getElementById(letter${i});
+            Object.keys(gradePoints).forEach(grade => {
+                const option = document.createElement('option');
+                option.value = grade;
+                option.textContent = grade;
+                select.appendChild(option);
+            });
+        }
+    </script>
+</body>
+</html>
