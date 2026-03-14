@@ -6,54 +6,55 @@
     <title>VTU 3rd Sem SGPA Calculator</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <style>
-        :root { --vtu-blue: #3f51b5; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; padding: 20px; }
-        .container { max-width: 750px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: var(--vtu-blue); }
-        .subject-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; gap: 10px; }
-        .subject-name { flex: 2; font-size: 14px; }
-        input[type="number"] { width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
-        .credit-box { width: 40px; background: #e0e0e0; padding: 8px; text-align: center; border-radius: 4px; font-weight: bold; }
-        .btn-calc { width: 100%; padding: 15px; background: var(--vtu-blue); color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin-top: 20px; }
-        #result-box { margin-top: 20px; padding: 20px; background: #edf7ed; border-radius: 8px; text-align: center; display: none; }
-        #sgpa-display { font-size: 36px; font-weight: bold; color: #2e7d32; }
-        .pdf-section { margin-top: 30px; padding: 15px; border: 2px dashed #999; text-align: center; border-radius: 8px; }
+        :root { --vtu-blue: #283593; }
+        body { font-family: sans-serif; background: #f4f4f9; padding: 20px; display: flex; justify-content: center; }
+        .card { background: white; width: 100%; max-width: 650px; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: var(--vtu-blue); margin-bottom: 20px; }
+        .row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; }
+        .label { flex: 2; font-size: 14px; color: #333; }
+        .input-group { display: flex; gap: 10px; align-items: center; }
+        input { width: 70px; padding: 8px; border: 1px solid #ccc; border-radius: 5px; text-align: center; font-size: 16px; }
+        .credit-tag { background: #e8eaf6; padding: 8px 12px; border-radius: 5px; font-weight: bold; width: 30px; text-align: center; }
+        .btn { width: 100%; padding: 15px; background: var(--vtu-blue); color: white; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; margin-top: 20px; }
+        #result-area { margin-top: 20px; padding: 20px; text-align: center; border-radius: 10px; background: #f1f8e9; display: none; }
+        #sgpa-text { font-size: 40px; font-weight: bold; color: #2e7d32; display: block; }
+        .pdf-box { margin-top: 30px; border: 2px dashed #999; padding: 20px; text-align: center; border-radius: 10px; background: #fffde7; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>3rd Sem SGPA Calculator</h1>
+<div class="card">
+    <h2>VTU SGPA (2022 Scheme)</h2>
     
-    <div id="calculator-form">
-        <div class="subject-row"><span class="subject-name">Mathematics (BCS301)</span> <input type="number" class="mark-input" data-credit="4" data-code="BCS301" placeholder="0-100"> <div class="credit-box">4</div></div>
-        <div class="subject-row"><span class="subject-name">Digital Design (BCS302)</span> <input type="number" class="mark-input" data-credit="4" data-code="BCS302" placeholder="0-100"> <div class="credit-box">4</div></div>
-        <div class="subject-row"><span class="subject-name">Operating System (BCS303)</span> <input type="number" class="mark-input" data-credit="4" data-code="BCS303" placeholder="0-100"> <div class="credit-box">4</div></div>
-        <div class="subject-row"><span class="subject-name">Data Structures (BCS304)</span> <input type="number" class="mark-input" data-credit="3" data-code="BCS304" placeholder="0-100"> <div class="credit-box">3</div></div>
-        <div class="subject-row"><span class="subject-name">Data Structures Lab (BCSL305)</span> <input type="number" class="mark-input" data-credit="1" data-code="BCSL305" placeholder="0-100"> <div class="credit-box">1</div></div>
-        <div class="subject-row"><span class="subject-name">Object Oriented Java (BCS306A)</span> <input type="number" class="mark-input" data-credit="3" data-code="BCS306A" placeholder="0-100"> <div class="credit-box">3</div></div>
-        <div class="subject-row"><span class="subject-name">Social Connect (BSCK307)</span> <input type="number" class="mark-input" data-credit="1" data-code="BSCK307" placeholder="0-100"> <div class="credit-box">1</div></div>
-        <div class="subject-row"><span class="subject-name">Project Mgmt (BCS358C)</span> <input type="number" class="mark-input" data-credit="1" data-code="BCS358C" placeholder="0-100"> <div class="credit-box">1</div></div>
-        <div class="subject-row"><span class="subject-name">Physical Education (BPEK359)</span> <input type="number" class="mark-input" data-credit="1" data-code="BPEK359" placeholder="0-100"> <div class="credit-box">1</div></div>
+    <div id="subjects">
+        <div class="row"><span class="label">Maths (BCS301)</span><div class="input-group"><input type="number" class="m-val" data-c="4" data-id="BCS301" placeholder="0"><div class="credit-tag">4</div></div></div>
+        <div class="row"><span class="label">DDCO (BCS302)</span><div class="input-group"><input type="number" class="m-val" data-c="4" data-id="BCS302" placeholder="0"><div class="credit-tag">4</div></div></div>
+        <div class="row"><span class="label">OS (BCS303)</span><div class="input-group"><input type="number" class="m-val" data-c="4" data-id="BCS303" placeholder="0"><div class="credit-tag">4</div></div></div>
+        <div class="row"><span class="label">Data Structures (BCS304)</span><div class="input-group"><input type="number" class="m-val" data-c="3" data-id="BCS304" placeholder="0"><div class="credit-tag">3</div></div></div>
+        <div class="row"><span class="label">DS Lab (BCSL305)</span><div class="input-group"><input type="number" class="m-val" data-c="1" data-id="BCSL305" placeholder="0"><div class="credit-tag">1</div></div></div>
+        <div class="row"><span class="label">Java (BCS306A)</span><div class="input-group"><input type="number" class="m-val" data-c="3" data-id="BCS306A" placeholder="0"><div class="credit-tag">3</div></div></div>
+        <div class="row"><span class="label">Social Connect (BSCK307)</span><div class="input-group"><input type="number" class="m-val" data-c="1" data-id="BSCK307" placeholder="0"><div class="credit-tag">1</div></div></div>
+        <div class="row"><span class="label">Git/Project (BCS358C)</span><div class="input-group"><input type="number" class="m-val" data-c="1" data-id="BCS358C" placeholder="0"><div class="credit-tag">1</div></div></div>
+        <div class="row"><span class="label">Physical Ed (BPEK359)</span><div class="input-group"><input type="number" class="m-val" data-c="1" data-id="BPEK359" placeholder="0"><div class="credit-tag">1</div></div></div>
     </div>
 
-    <button class="btn-calc" onclick="calculateVTU()">Calculate SGPA</button>
+    <button class="btn" onclick="runCalculation()">Calculate SGPA</button>
 
-    <div id="result-box">
-        <strong>Calculated SGPA</strong><br>
-        <span id="sgpa-display">0.00</span><br>
+    <div id="result-area">
+        <strong>YOUR SGPA</strong>
+        <span id="sgpa-text">0.00</span>
         <span id="status-tag">Status: PASS ✅</span>
     </div>
 
-    <div class="pdf-section">
-        <strong>Upload Result PDF</strong><br><br>
-        <input type="file" id="uploadPdf" accept="application/pdf">
+    <div class="pdf-box">
+        <strong>PDF Result Upload</strong><br>
+        <input type="file" id="fileInput" accept="application/pdf" style="margin-top:10px;">
     </div>
 </div>
 
 <script>
-    // VTU Grading Formula 2022 Scheme
-    function getGradePoint(m) {
+    // 1. Formula Logic
+    function getPoints(m) {
         if (m >= 90) return 10;
         if (m >= 80) return 9;
         if (m >= 70) return 8;
@@ -63,41 +64,36 @@
         return 0;
     }
 
-    function calculateVTU() {
-        const allInputs = document.querySelectorAll('.mark-input');
-        let totalCiGi = 0;  // Credits * GradePoints
-        let totalCi = 0;    // Total Credits
+    // 2. Main Calculation Function
+    function runCalculation() {
+        const inputs = document.querySelectorAll('.m-val');
+        let totalWeightedPoints = 0;
+        let totalCredits = 0;
 
-        allInputs.forEach(input => {
-            let marksValue = parseFloat(input.value);
-            // If empty, treat as 0
-            if (isNaN(marksValue)) marksValue = 0;
-
-            let credits = parseFloat(input.getAttribute('data-credit'));
-            let gp = getGradePoint(marksValue);
-
-            totalCiGi += (gp * credits);
-            totalCi += credits;
+        inputs.forEach(box => {
+            const marks = parseFloat(box.value) || 0;
+            const credits = parseFloat(box.getAttribute('data-c'));
+            
+            const gradePoints = getPoints(marks);
+            totalWeightedPoints += (gradePoints * credits);
+            totalCredits += credits;
         });
 
-        // The Calculation
-        let sgpa = totalCiGi / totalCi;
-
-        // Displaying the result
-        const resultDiv = document.getElementById('result-box');
-        const sgpaText = document.getElementById('sgpa-display');
+        const finalSGPA = totalWeightedPoints / totalCredits;
         
+        // Show Results
+        const resultDiv = document.getElementById('result-area');
         resultDiv.style.display = 'block';
-        sgpaText.innerText = sgpa.toFixed(2);
-
-        // Update Status
-        document.getElementById('status-tag').innerText = sgpa >= 4.0 ? "Status: PASS ✅" : "Status: FAIL ❌";
+        document.getElementById('sgpa-text').innerText = finalSGPA.toFixed(2);
+        
+        document.getElementById('status-tag').innerText = finalSGPA >= 4 ? "Status: PASS ✅" : "Status: FAIL ❌";
+        
+        console.log("Calculation Done: ", finalSGPA);
     }
 
-    // PDF Support
+    // 3. PDF Logic
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-    
-    document.getElementById('uploadPdf').addEventListener('change', async (e) => {
+    document.getElementById('fileInput').addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if(!file) return;
         const reader = new FileReader();
@@ -109,13 +105,13 @@
                 const content = await page.getTextContent();
                 text += content.items.map(s => s.str).join(" ");
             }
-            document.querySelectorAll('.mark-input').forEach(input => {
-                const code = input.getAttribute('data-code');
-                const reg = new RegExp(code + "\\s+(\\d+)", "i");
+            document.querySelectorAll('.m-val').forEach(input => {
+                const id = input.getAttribute('data-id');
+                const reg = new RegExp(id + "\\s+(\\d+)", "i");
                 const match = text.match(reg);
                 if(match) input.value = match[1];
             });
-            calculateVTU();
+            runCalculation();
         };
         reader.readAsArrayBuffer(file);
     });
