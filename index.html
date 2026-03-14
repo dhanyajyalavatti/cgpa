@@ -3,54 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VTU SGPA Calculator & PDF Scanner</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <title>VTU 3rd Sem SGPA Calculator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <style>
-        :root { --vtu-blue: #1a2a6c; --vtu-accent: #f2a900; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; padding: 20px; }
-        .card { background: white; max-width: 700px; margin: auto; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 5px solid var(--vtu-blue); }
-        h1 { color: var(--vtu-blue); text-align: center; font-size: 24px; }
-        .subject-row { display: flex; justify-content: space-between; margin-bottom: 12px; padding: 8px; background: #fafafa; border-radius: 5px; }
-        input[type="number"] { width: 60px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; }
-        .btn { display: block; width: 100%; padding: 12px; background: var(--vtu-blue); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; margin-top: 15px; }
-        .btn:hover { background: #253b91; }
-        .pdf-box { border: 2px dashed #bbb; padding: 20px; text-align: center; margin-top: 20px; background: #fffdf0; border-radius: 8px; }
-        #result { font-size: 28px; text-align: center; margin-top: 20px; color: #27ae60; font-weight: bold; }
+        :root { --vtu-blue: #1a237e; --vtu-gold: #ffd700; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: var(--vtu-blue); margin-bottom: 5px; }
+        p.subtitle { text-align: center; color: #666; margin-bottom: 25px; }
+        
+        .subject-grid { display: grid; grid-template-columns: 1fr 120px 80px; gap: 15px; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 10px; font-weight: bold; }
+        .subject-row { display: grid; grid-template-columns: 1fr 120px 80px; gap: 15px; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+        
+        input[type="number"] { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; text-align: center; }
+        .credits-display { text-align: center; color: var(--vtu-blue); font-weight: bold; background: #e8eaf6; padding: 5px; border-radius: 4px; }
+        
+        .btn-calc { display: block; width: 100%; padding: 15px; background: var(--vtu-blue); color: white; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        .btn-calc:hover { background: #283593; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        
+        #result-box { margin-top: 25px; text-align: center; padding: 20px; border-radius: 10px; background: #e8f5e9; display: none; }
+        #sgpa-val { font-size: 32px; color: #2e7d32; display: block; }
+
+        .pdf-upload-section { margin-top: 30px; border: 2px dashed #999; padding: 20px; text-align: center; border-radius: 10px; background: #fffde7; }
+        .loader { display: none; color: #1a237e; font-weight: bold; }
+          body.dark-mode { background: #121212; color: #e0e0e0; }
+    .dark-mode .container { background: #1e1e1e; border-top-color: #bb86fc; }
+    .dark-mode input { background: #333; color: white; border-color: #444; }
+    
+    /* Gauge Style */
+    #gauge-container { width: 150px; height: 150px; margin: 20px auto; position: relative; }
+    .gauge-circle { transform: rotate(-90deg); }
+    .gauge-bg { fill: none; stroke: #eee; stroke-width: 10; }
+    .gauge-fill { fill: none; stroke: #27ae60; stroke-width: 10; stroke-dasharray: 440; stroke-dashoffset: 440; transition: stroke-dashoffset 1s ease-out; }
+    
+    .theme-toggle { position: absolute; top: 20px; right: 20px; cursor: pointer; padding: 10px; border-radius: 50%; background: #ddd; }
+</style>
+
+<div id="gauge-container">
+    <svg width="150" height="150" class="gauge-circle">
+        <circle cx="75" cy="75" r="70" class="gauge-bg"></circle>
+        <circle id="gauge" cx="75" cy="75" r="70" class="gauge-fill"></circle>
+    </svg>
+    <div id="sgpa-val" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px;">0.0</div>
+</div>
+
+<button class="btn-calc" style="background: #e74c3c; margin-top: 10px;" onclick="resetFields()">Clear All Data</button>
+
+<script>
+    // New Function to update the Visual Gauge
+    function updateGauge(sgpa) {
+        const circle = document.getElementById('gauge');
+        const radius = circle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference - (sgpa / 10) * circumference;
+        circle.style.strokeDashoffset = offset;
+    }
+
+    function resetFields() {
+        document.querySelectorAll('.mark-input').forEach(i => i.value = '');
+        document.getElementById('result-box').style.display = 'none';
+        updateGauge(0);
+    }
+
+    // Toggle Dark Mode
+    function toggleTheme() {
+        document.body.classList.toggle('dark-mode');
+    }
+    </script>
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h1>VTU 2022 Scheme - 3rd Sem</h1>
-    
-    <div id="subject-inputs">
-        <div class="subject-row"><span>Maths (BCS301) [4]</span> <input type="number" class="mark" data-code="BCS301" data-credit="4" placeholder="0"></div>
-        <div class="subject-row"><span>DDCO (BCS302) [4]</span> <input type="number" class="mark" data-code="BCS302" data-credit="4" placeholder="0"></div>
-        <div class="subject-row"><span>OS (BCS303) [4]</span> <input type="number" class="mark" data-code="BCS303" data-credit="4" placeholder="0"></div>
-        <div class="subject-row"><span>DS (BCS304) [3]</span> <input type="number" class="mark" data-code="BCS304" data-credit="3" placeholder="0"></div>
-        <div class="subject-row"><span>DS Lab (BCSL305) [1]</span> <input type="number" class="mark" data-code="BCSL305" data-credit="1" placeholder="0"></div>
-        <div class="subject-row"><span>Java (BCS306A) [3]</span> <input type="number" class="mark" data-code="BCS306A" data-credit="3" placeholder="0"></div>
-        <div class="subject-row"><span>SCR (BSCK307) [1]</span> <input type="number" class="mark" data-code="BSCK307" data-credit="1" placeholder="0"></div>
-        <div class="subject-row"><span>Git Project (BCS358C) [1]</span> <input type="number" class="mark" data-code="BCS358C" data-credit="1" placeholder="0"></div>
-        <div class="subject-row"><span>PE (BPEK359) [1]</span> <input type="number" class="mark" data-code="BPEK359" data-credit="1" placeholder="0"></div>
+<div class="container">
+    <h1>VTU SGPA Calculator</h1>
+    <p class="subtitle">2022 Scheme - 3rd Semester (CSE/Related Branches)</p>
+
+    <div class="subject-grid">
+        <span>Subject Name & Code</span>
+        <span>Marks (0-100)</span>
+        <span>Credits</span>
     </div>
 
-    <button class="btn" onclick="manualCalculate()">Calculate SGPA</button>
-    <div id="result">SGPA: 0.00</div>
+    <div id="subject-list">
+        <div class="subject-row"><span>Mathematics (BCS301)</span><input type="number" class="mark-input" data-credit="4" data-code="BCS301" min="0" max="100"> <div class="credits-display">4</div></div>
+        <div class="subject-row"><span>Digital Design (BCS302)</span><input type="number" class="mark-input" data-credit="4" data-code="BCS302" min="0" max="100"> <div class="credits-display">4</div></div>
+        <div class="subject-row"><span>Operating System (BCS303)</span><input type="number" class="mark-input" data-credit="4" data-code="BCS303" min="0" max="100"> <div class="credits-display">4</div></div>
+        <div class="subject-row"><span>Data Structures (BCS304)</span><input type="number" class="mark-input" data-credit="3" data-code="BCS304" min="0" max="100"> <div class="credits-display">3</div></div>
+        <div class="subject-row"><span>Data Structures Lab (BCSL305)</span><input type="number" class="mark-input" data-credit="1" data-code="BCSL305" min="0" max="100"> <div class="credits-display">1</div></div>
+        <div class="subject-row"><span>Object Oriented Java (BCS306A)</span><input type="number" class="mark-input" data-credit="3" data-code="BCS306A" min="0" max="100"> <div class="credits-display">3</div></div>
+        <div class="subject-row"><span>Social Connect (BSCK307)</span><input type="number" class="mark-input" data-credit="1" data-code="BSCK307" min="0" max="100"> <div class="credits-display">1</div></div>
+        <div class="subject-row"><span>Project Mgmt (BCS358C)</span><input type="number" class="mark-input" data-credit="1" data-code="BCS358C" min="0" max="100"> <div class="credits-display">1</div></div>
+        <div class="subject-row"><span>Physical Education (BPEK359)</span><input type="number" class="mark-input" data-credit="1" data-code="BPEK359" min="0" max="100"> <div class="credits-display">1</div></div>
+    </div>
 
-    <div class="pdf-box">
-        <strong>Upload VTU Result PDF</strong><br><br>
-        <input type="file" id="pdfUpload" accept="application/pdf">
-        <p style="font-size: 12px; color: #666; margin-top: 10px;">Experimental: Scans for 2022 Scheme codes.</p>
+    <button class="btn-calc" onclick="calculateSGPA()">Calculate SGPA</button>
+
+    <div id="result-box">
+        <strong>Calculated SGPA</strong>
+        <span id="sgpa-val">0.00</span>
+        <p id="grade-info"></p>
+    </div>
+
+    <div class="pdf-upload-section">
+        <h3>📄 Smart Upload</h3>
+        <p>Upload your VTU Result PDF to auto-fill marks</p>
+        <input type="file" id="pdfFile" accept="application/pdf">
+        <div id="loading" class="loader">Scanning PDF... Please wait.</div>
     </div>
 </div>
 
 <script>
-    // Configure PDF.js Worker
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    // Link the worker for PDF.js
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
-    // 1. VTU Grading Logic
-    function getGP(marks) {
+    function getGradePoint(marks) {
         if (marks >= 90) return 10;
         if (marks >= 80) return 9;
         if (marks >= 70) return 8;
@@ -60,60 +126,79 @@
         return 0;
     }
 
-    // 2. Manual Calculation
-    function manualCalculate() {
-        let rows = document.querySelectorAll('.mark');
-        let totalPoints = 0;
+    function calculateSGPA() {
+        let totalWeightedPoints = 0;
         let totalCredits = 0;
+        const inputs = document.querySelectorAll('.mark-input');
 
-        rows.forEach(row => {
-            let mark = parseInt(row.value) || 0;
-            let credit = parseInt(row.getAttribute('data-credit'));
-            totalPoints += (getGP(mark) * credit);
-            totalCredits += credit;
+        inputs.forEach(input => {
+            const marks = parseFloat(input.value) || 0;
+            const credits = parseFloat(input.dataset.credit);
+            totalWeightedPoints += (getGradePoint(marks) * credits);
+            totalCredits += credits;
         });
 
-        let sgpa = totalPoints / totalCredits;
-        document.getElementById('result').innerText = "SGPA: " + sgpa.toFixed(2);
+        const sgpa = totalWeightedPoints / totalCredits;
+        
+        const resBox = document.getElementById('result-box');
+        resBox.style.display = 'block';
+        document.getElementById('sgpa-val').innerText = sgpa.toFixed(2);
+        
+        // Final feedback
+        let msg = sgpa >= 4 ? "Status: PASS ✅" : "Status: Fail/Arrears ❌";
+        document.getElementById('grade-info').innerText = msg;
+        resBox.scrollIntoView({ behavior: 'smooth' });
     }
 
-    // 3. PDF Parsing Logic
-    document.getElementById('pdfUpload').addEventListener('change', async (e) => {
-        const file = e.target.files[0];
+    // PDF Parser Logic
+    document.getElementById('pdfFile').addEventListener('change', async (event) => {
+        const file = event.target.files[0];
         if (!file) return;
+
+        document.getElementById('loading').style.display = 'block';
 
         const reader = new FileReader();
         reader.onload = async function() {
             const typedarray = new Uint8Array(this.result);
             const pdf = await pdfjsLib.getDocument(typedarray).promise;
-            let fullText = "";
+            let textContent = "";
 
             for (let i = 1; i <= pdf.numPages; i++) {
                 const page = await pdf.getPage(i);
                 const content = await page.getTextContent();
-                fullText += content.items.map(item => item.str).join(" ");
+                textContent += content.items.map(s => s.str).join(" ");
             }
 
-            console.log("PDF Scanned text:", fullText); // For debugging
-            fillMarks(fullText);
+            autoFillMarks(textContent);
+            document.getElementById('loading').style.display = 'none';
         };
         reader.readAsArrayBuffer(file);
     });
 
-    function fillMarks(text) {
-        let inputs = document.querySelectorAll('.mark');
+    function autoFillMarks(text) {
+        const inputs = document.querySelectorAll('.mark-input');
+        let foundAny = false;
+
         inputs.forEach(input => {
-            let code = input.getAttribute('data-code');
-            // This regex looks for the code (like BCS301) and picks the next number after it
-            let regex = new RegExp(code + "\\s+(\\d+)", "i");
-            let match = text.match(regex);
-            if (match) {
+            const code = input.dataset.code;
+            // Look for code followed by numbers (Total marks)
+            const regex = new RegExp(code + "\\s+(\\d+)", "i");
+            const match = text.match(regex);
+            
+            if (match && match[1]) {
                 input.value = match[1];
+                foundAny = true;
             }
         });
-        manualCalculate(); // Recalculate once filled
-        alert("Scan complete! Marks filled from PDF.");
+
+        if (foundAny) {
+            alert("Marks auto-filled successfully!");
+            calculateSGPA();
+        } else {
+            alert("Could not find matching subject codes in the PDF. Please enter marks manually.");
+        }
     }
+    
 </script>
 
 </body>
