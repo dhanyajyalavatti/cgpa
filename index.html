@@ -3,53 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VTU SGPA Calculator - Fixed PDF</title>
+    <title>VTU SGPA Calculator - Final Fix</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
-        :root { --primary: #1a237e; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f9; padding: 20px; }
-        .card { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .subject-row { display: grid; grid-template-columns: 3fr 1fr 1fr; gap: 10px; padding: 10px; border-bottom: 1px solid #eee; align-items: center; }
-        input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; text-align: center; }
-        .btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 20px; font-weight: bold; }
-        #result-box { margin-top: 20px; padding: 20px; text-align: center; border-radius: 8px; background: #e8f5e9; display: none; }
-        #sgpa-output { font-size: 36px; color: #2e7d32; font-weight: bold; }
-        .pdf-section { margin-top: 25px; border: 2px dashed #3f51b5; padding: 15px; text-align: center; background: #fdfdfd; border-radius: 8px; }
+        :root { --vtu-blue: #1a237e; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f0f2f5; padding: 20px; color: #333; }
+        .card { max-width: 650px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 6px solid var(--vtu-blue); }
+        h2 { text-align: center; color: var(--vtu-blue); margin-top: 0; }
+        .row { display: grid; grid-template-columns: 3fr 1fr 1fr; gap: 15px; padding: 12px 0; border-bottom: 1px solid #eee; align-items: center; }
+        .header { font-weight: bold; border-bottom: 2px solid var(--vtu-blue); color: var(--vtu-blue); }
+        input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; text-align: center; font-size: 16px; background: #fafafa; }
+        .credit-box { text-align: center; font-weight: bold; background: #e8eaf6; padding: 10px; border-radius: 6px; }
+        .btn { width: 100%; padding: 16px; background: var(--vtu-blue); color: white; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; margin-top: 25px; transition: 0.2s; }
+        .btn:hover { background: #283593; transform: translateY(-1px); }
+        #result-box { margin-top: 25px; padding: 25px; text-align: center; border-radius: 12px; background: #e8f5e9; display: none; border: 2px solid #2e7d32; }
+        #sgpa-val { font-size: 48px; font-weight: bold; color: #1b5e20; display: block; }
+        .pdf-section { margin-top: 35px; border: 2px dashed #999; padding: 20px; text-align: center; border-radius: 12px; background: #fffde7; }
+        #debug-log { font-family: monospace; font-size: 10px; color: #999; margin-top: 10px; text-align: left; max-height: 50px; overflow: hidden; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2 style="text-align: center; color: var(--primary);">VTU SGPA (2022 Scheme)</h2>
+    <h2>3rd Sem SGPA Calculator</h2>
     
-    <div id="calculator">
-        <div class="subject-row"><span>Mathematics (BCS301)</span> <input type="number" class="m-val" data-c="4" data-id="BCS301"> <b>4</b></div>
-        <div class="subject-row"><span>Digital Design (BCS302)</span> <input type="number" class="m-val" data-c="4" data-id="BCS302"> <b>4</b></div>
-        <div class="subject-row"><span>Operating System (BCS303)</span> <input type="number" class="m-val" data-c="4" data-id="BCS303"> <b>4</b></div>
-        <div class="subject-row"><span>Data Structures (BCS304)</span> <input type="number" class="m-val" data-c="3" data-id="BCS304"> <b>3</b></div>
-        <div class="subject-row"><span>DS Lab (BCSL305)</span> <input type="number" class="m-val" data-c="1" data-id="BCSL305"> <b>1</b></div>
-        <div class="subject-row"><span>Java (BCS306A)</span> <input type="number" class="m-val" data-c="3" data-id="BCS306A"> <b>3</b></div>
-        <div class="subject-row"><span>SCR (BSCK307)</span> <input type="number" class="m-val" data-c="1" data-id="BSCK307"> <b>1</b></div>
-        <div class="subject-row"><span>Git Project (BCS358C)</span> <input type="number" class="m-val" data-c="1" data-id="BCS358C"> <b>1</b></div>
-        <div class="subject-row"><span>Physical Ed (BPEK359)</span> <input type="number" class="m-val" data-c="1" data-id="BPEK359"> <b>1</b></div>
+    <div class="row header"><span>Subject (Code)</span><span>Marks</span><span>Credits</span></div>
+    <div id="form-body">
+        <div class="row"><span>Maths (BCS301)</span> <input type="number" class="m-in" data-c="4" data-id="BCS301"> <div class="credit-box">4</div></div>
+        <div class="row"><span>DDCO (BCS302)</span> <input type="number" class="m-in" data-c="4" data-id="BCS302"> <div class="credit-box">4</div></div>
+        <div class="row"><span>OS (BCS303)</span> <input type="number" class="m-in" data-c="4" data-id="BCS303"> <div class="credit-box">4</div></div>
+        <div class="row"><span>Data Structures (BCS304)</span> <input type="number" class="m-in" data-c="3" data-id="BCS304"> <div class="credit-box">3</div></div>
+        <div class="row"><span>DS Lab (BCSL305)</span> <input type="number" class="m-in" data-c="1" data-id="BCSL305"> <div class="credit-box">1</div></div>
+        <div class="row"><span>Java (BCS306A)</span> <input type="number" class="m-in" data-c="3" data-id="BCS306A"> <div class="credit-box">3</div></div>
+        <div class="row"><span>Social Connect (BSCK307)</span> <input type="number" class="m-in" data-c="1" data-id="BSCK307"> <div class="credit-box">1</div></div>
+        <div class="row"><span>Git/Project (BCS358C)</span> <input type="number" class="m-in" data-c="1" data-id="BCS358C"> <div class="credit-box">1</div></div>
+        <div class="row"><span>Physical Ed (BPEK359)</span> <input type="number" class="m-in" data-c="1" data-id="BPEK359"> <div class="credit-box">1</div></div>
     </div>
 
     <button class="btn" onclick="calculate()">Calculate SGPA</button>
 
     <div id="result-box">
-        <strong>SGPA</strong><br>
-        <span id="sgpa-output">0.00</span>
+        <strong>YOUR CALCULATED SGPA</strong>
+        <span id="sgpa-val">0.00</span>
+        <strong id="status-msg"></strong>
     </div>
 
     <div class="pdf-section">
-        <strong>Upload Result PDF</strong><br><br>
-        <input type="file" id="pdfFile" accept="application/pdf">
-        <p id="pdf-status" style="font-size: 11px; color: #666; margin-top: 10px;">Status: Ready to upload</p>
+        <strong>📄 PDF Auto-Fill</strong><br>
+        <p style="font-size: 13px; color: #555;">Upload your VTU Result PDF</p>
+        <input type="file" id="pdfInput" accept="application/pdf">
+        <div id="debug-log">Ready.</div>
     </div>
 </div>
 
 <script>
-    // VTU Grading Logic
+    // VTU Grading Logic (2022 Scheme)
     function getGP(m) {
         if (m >= 90) return 10;
         if (m >= 80) return 9;
@@ -61,57 +69,82 @@
     }
 
     function calculate() {
-        const inputs = document.querySelectorAll('.m-val');
-        let totalWeighted = 0, totalCredits = 0;
+        const inputs = document.querySelectorAll('.m-in');
+        let totalCiGi = 0;
+        let totalCi = 0;
 
-        inputs.forEach(i => {
-            const marks = parseFloat(i.value) || 0;
-            const credits = parseFloat(i.dataset.c);
-            totalWeighted += (getGP(marks) * credits);
-            totalCredits += credits;
+        inputs.forEach(input => {
+            const marks = parseFloat(input.value) || 0;
+            const credits = parseFloat(input.dataset.c);
+            totalCiGi += (getGP(marks) * credits);
+            totalCi += credits;
         });
 
-        const sgpa = totalWeighted / totalCredits;
+        const sgpa = totalCiGi / totalCi;
         document.getElementById('result-box').style.display = 'block';
-        document.getElementById('sgpa-output').innerText = sgpa.toFixed(2);
+        document.getElementById('sgpa-val').innerText = sgpa.toFixed(2);
+        document.getElementById('status-msg').innerText = sgpa >= 4 ? "Status: PASS ✅" : "Status: FAIL ❌";
     }
 
     // Advanced PDF Logic
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-    document.getElementById('pdfFile').addEventListener('change', async (e) => {
+    document.getElementById('pdfInput').addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        document.getElementById('pdf-status').innerText = "Scanning PDF...";
-
+        
+        document.getElementById('debug-log').innerText = "Processing PDF...";
         const reader = new FileReader();
+        
         reader.onload = async function() {
             try {
-                const pdf = await pdfjsLib.getDocument(new Uint8Array(this.result)).promise;
-                let text = "";
+                const pdf = await pdfjsLib.getDocument({data: new Uint8Array(this.result)}).promise;
+                let fullText = "";
+                
                 for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
                     const content = await page.getTextContent();
-                    text += content.items.map(s => s.str).join(" ");
+                    // Join items with single spaces and clean extra whitespace
+                    fullText += content.items.map(item => item.str).join(" ");
                 }
+                
+                // Remove weird characters and condense spaces for easier searching
+                const cleanText = fullText.replace(/\s+/g, ' ');
+                
+                const inputs = document.querySelectorAll('.m-in');
+                let foundCount = 0;
 
-                // New logic: Look for subject codes and capture the next two sets of numbers (Internals + Externals)
-                const inputs = document.querySelectorAll('.m-val');
                 inputs.forEach(input => {
                     const code = input.dataset.id;
-                    const regex = new RegExp(code + "\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)", "i");
-                    const match = text.match(regex);
+                    // Look for the Code, then match numbers following it. 
+                    // VTU format usually: [Code] [Internals] [Externals] [Total]
+                    // We look for the 3rd number (the total)
+                    const regex = new RegExp(code + "\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)", "i");
+                    const match = cleanText.match(regex);
                     
-                    if (match) {
-                        // match[3] is usually the "Total" column in VTU sheets
+                    if (match && match[3]) {
                         input.value = match[3];
+                        foundCount++;
+                    } else {
+                        // Fallback: Just look for any number 1-100 right after the code
+                        const simpleRegex = new RegExp(code + "\\s*(\\d{1,3})", "i");
+                        const simpleMatch = cleanText.match(simpleRegex);
+                        if (simpleMatch) {
+                            input.value = simpleMatch[1];
+                            foundCount++;
+                        }
                     }
                 });
 
-                document.getElementById('pdf-status').innerText = "PDF Scan Complete!";
+                document.getElementById('debug-log').innerText = Found ${foundCount} subjects.;
                 calculate();
+                
+                if(foundCount === 0) {
+                    alert("PDF detected, but no marks found. This usually happens if the PDF is an image scan. Please enter marks manually.");
+                }
             } catch (err) {
-                document.getElementById('pdf-status').innerText = "Error reading PDF.";
+                console.error(err);
+                document.getElementById('debug-log').innerText = "Error: PDF format not supported.";
             }
         };
         reader.readAsArrayBuffer(file);
