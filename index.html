@@ -3,98 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VTU SGPA Calculator - Fixed PDF</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <title>VTU 3rd Sem SGPA Calculator</title>
     <style>
-        :root { --primary: #1a237e; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f9; padding: 20px; }
-        .card { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .subject-row { display: grid; grid-template-columns: 3fr 1fr 1fr; gap: 10px; padding: 10px; border-bottom: 1px solid #eee; align-items: center; }
-        input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; text-align: center; }
-        .btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 20px; font-weight: bold; }
-        #result-box { margin-top: 20px; padding: 20px; text-align: center; border-radius: 8px; background: #e8f5e9; display: none; }
-        #sgpa-output { font-size: 36px; color: #2e7d32; font-weight: bold; }
-        .pdf-section { margin-top: 25px; border: 2px dashed #3f51b5; padding: 15px; text-align: center; background: #fdfdfd; border-radius: 8px; }
+        :root { --primary: #1a237e; --secondary: #2e7d32; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; padding: 20px; color: #333; }
+        .card { max-width: 500px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: var(--primary); margin-bottom: 5px; }
+        p.subtitle { text-align: center; font-size: 0.9em; color: #666; margin-bottom: 25px; }
+        
+        .header-row { display: grid; grid-template-columns: 3fr 1.5fr 1fr; gap: 10px; padding: 10px; font-weight: bold; border-bottom: 2px solid var(--primary); }
+        .subject-row { display: grid; grid-template-columns: 3fr 1.5fr 1fr; gap: 10px; padding: 12px 10px; border-bottom: 1px solid #eee; align-items: center; }
+        
+        input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; text-align: center; font-size: 16px; transition: border 0.3s; }
+        input:focus { border-color: var(--primary); outline: none; background: #f8f9ff; }
+        
+        .credit-badge { background: #e8eaf6; color: var(--primary); padding: 4px 8px; border-radius: 4px; font-size: 0.85em; font-weight: bold; text-align: center; }
+        
+        .btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 25px; font-size: 18px; font-weight: bold; transition: opacity 0.2s; }
+        .btn:hover { opacity: 0.9; }
+        
+        #result-box { margin-top: 25px; padding: 20px; text-align: center; border-radius: 10px; background: #e8f5e9; display: none; border: 1px solid #c8e6c9; }
+        #sgpa-output { font-size: 42px; color: var(--secondary); font-weight: bold; display: block; margin-top: 5px; }
+        .grade-text { font-size: 1.1em; color: #444; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2 style="text-align: center; color: var(--primary);">VTU SGPA (2022 Scheme)</h2>
+    <h2>VTU SGPA Calculator</h2>
+    <p class="subtitle">2022 Scheme - Semester 3</p>
     
+    <div class="header-row">
+        <span>Subject</span>
+        <span>Marks</span>
+        <span>Credits</span>
+    </div>
+
     <div id="calculator">
-        <div class="subject-row"><span>Mathematics (BCS301)</span> <input type="number" class="m-val" data-c="4" data-id="BCS301"> <b>4</b></div>
-        <div class="subject-row"><span>Digital Design (BCS302)</span> <input type="number" class="m-val" data-c="4" data-id="BCS302"> <b>4</b></div>
-        <div class="subject-row"><span>Operating System (BCS303)</span> <input type="number" class="m-val" data-c="4" data-id="BCS303"> <b>4</b></div>
-        <div class="subject-row"><span>Data Structures (BCS304)</span> <input type="number" class="m-val" data-c="3" data-id="BCS304"> <b>3</b></div>
-        <div class="subject-row"><span>DS Lab (BCSL305)</span> <input type="number" class="m-val" data-c="1" data-id="BCSL305"> <b>1</b></div>
-        <div class="subject-row"><span>Java (BCS306A)</span> <input type="number" class="m-val" data-c="3" data-id="BCS306A"> <b>3</b></div>
-        <div class="subject-row"><span>SCR (BSCK307)</span> <input type="number" class="m-val" data-c="1" data-id="BSCK307"> <b>1</b></div>
-        <div class="subject-row"><span>Git Project (BCS358C)</span> <input type="number" class="m-val" data-c="1" data-id="BCS358C"> <b>1</b></div>
-        <div class="subject-row"><span>Physical Ed (BPEK359)</span> <input type="number" class="m-val" data-c="1" data-id="BPEK359"> <b>1</b></div>
+        <div class="subject-row"><span>Maths (BCS301)</span> <input type="number" class="m-val" data-c="3" placeholder="0-100"> <span class="credit-badge">3</span></div>
+        <div class="subject-row"><span>DDCO (BCS302)</span> <input type="number" class="m-val" data-c="4" placeholder="0-100"> <span class="credit-badge">4</span></div>
+        <div class="subject-row"><span>OS (BCS303)</span> <input type="number" class="m-val" data-c="3" placeholder="0-100"> <span class="credit-badge">3</span></div>
+        <div class="subject-row"><span>Data Struct (BCS304)</span> <input type="number" class="m-val" data-c="3" placeholder="0-100"> <span class="credit-badge">3</span></div>
+        <div class="subject-row"><span>DS Lab (BCSL305)</span> <input type="number" class="m-val" data-c="1" placeholder="0-100"> <span class="credit-badge">1</span></div>
+        <div class="subject-row"><span>Java (BCS306A)</span> <input type="number" class="m-val" data-c="3" placeholder="0-100"> <span class="credit-badge">3</span></div>
+        <div class="subject-row"><span>SCR (BSCK307)</span> <input type="number" class="m-val" data-c="1" placeholder="0-100"> <span class="credit-badge">1</span></div>
+        <div class="subject-row"><span>Git (BCS358C)</span> <input type="number" class="m-val" data-c="1" placeholder="0-100"> <span class="credit-badge">1</span></div>
+        <div class="subject-row"><span>Phys Ed (BPEK359)</span> <input type="number" class="m-val" data-c="1" placeholder="0-100"> <span class="credit-badge">1</span></div>
     </div>
 
     <button class="btn" onclick="calculate()">Calculate SGPA</button>
 
     <div id="result-box">
-        <strong>SGPA</strong><br>
+        <span class="grade-text">Your Semester SGPA is:</span>
         <span id="sgpa-output">0.00</span>
     </div>
-
 </div>
 
 <script>
-    // VTU Grading Logic
-    function getGP(m) {
-        if (m >= 90) return 10;
-        if (m >= 80) return 9;
-        if (m >= 70) return 8;
-        if (m >= 60) return 7;
-        if (m >= 45) return 6;
-        if (m >= 40) return 4;
-        return 0;
+    /**
+     * VTU 2022 Scheme Grading Logic
+     * Marks Range -> Grade Point
+     */
+    function getGradePoint(marks) {
+        if (marks >= 90) return 10; // O
+        if (marks >= 80) return 9;  // A+
+        if (marks >= 70) return 8;  // A
+        if (marks >= 60) return 7;  // B+
+        if (marks >= 55) return 6;  // B
+        if (marks >= 50) return 5;  // C
+        if (marks >= 40) return 4;  // P
+        return 0;                   // F
     }
 
     function calculate() {
         const inputs = document.querySelectorAll('.m-val');
-        let totalWeighted = 0, totalCredits = 0;
+        let totalWeightedGP = 0;
+        let totalCredits = 0;
+        let hasError = false;
 
-        inputs.forEach(i => {
-            const marks = parseFloat(i.value) || 0;
-            const credits = parseFloat(i.dataset.c);
-            totalWeighted += (getGP(marks) * credits);
+        inputs.forEach(input => {
+            const marks = parseFloat(input.value);
+            const credits = parseFloat(input.dataset.c);
+
+            // Validation: Treat empty as 0, but check for range
+            if (!isNaN(marks)) {
+                if (marks < 0 || marks > 100) {
+                    alert("Please enter marks between 0 and 100");
+                    input.focus();
+                    hasError = true;
+                    return;
+                }
+                totalWeightedGP += (getGradePoint(marks) * credits);
+            }
             totalCredits += credits;
         });
 
-        const sgpa = totalWeighted / totalCredits;
-        document.getElementById('result-box').style.display = 'block';
-        document.getElementById('sgpa-output').innerText = sgpa.toFixed(2);
+        if (hasError) return;
+
+        const sgpa = totalWeightedGP / totalCredits;
+        
+        const resultBox = document.getElementById('result-box');
+        const output = document.getElementById('sgpa-output');
+        
+        resultBox.style.display = 'block';
+        output.innerText = sgpa.toFixed(2);
+        
+        // Smooth scroll to result
+        resultBox.scrollIntoView({ behavior: 'smooth' });
     }
-
-    
-                }
-
-                // New logic: Look for subject codes and capture the next two sets of numbers (Internals + Externals)
-                const inputs = document.querySelectorAll('.m-val');
-                inputs.forEach(input => {
-                    const code = input.dataset.id;
-                    const regex = new RegExp(code + "\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)", "i");
-                    const match = text.match(regex);
-                    
-                    if (match) {
-                        // match[3] is usually the "Total" column in VTU sheets
-                        input.value = match[3];
-                    }
-                });
-
-                document.getElementById('pdf-status').innerText = "PDF Scan Complete!";
-                calculate();
-            } catch (err) {
-                document.getElementById('pdf-status').innerText = "Error reading PDF.";
-            }
-        };
-        reader.readAsArrayBuffer(file);
-    });
 </script>
 
 </body>
